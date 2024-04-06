@@ -3,7 +3,7 @@ from joueur.joueur import Joueur
 class IA(Joueur):
     def __init__(self, couleur):
         super().__init__(couleur)
-        self.profondeur = 4  
+        self.profondeur = 3 
 
     def evaluer_plateau(self, plateau):
         """

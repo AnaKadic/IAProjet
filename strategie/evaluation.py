@@ -143,7 +143,7 @@ class Evaluation:
         """
         score_defensif = 0
         couleur_adverse = 'N' if couleur == 'B' else 'B'
-        threat_multiplier = -100  # Pénalité accrue pour les menaces imminentes
+        threat_multiplier = -100  
         directions = [(0, 1), (1, 0), (1, 1), (-1, 1)]
     
         for ligne in range(plateau.taille):
@@ -282,7 +282,7 @@ class Evaluation:
                                     espaces += 1
                             else:
                                 break
-                        # Évaluez non seulement les alignements actuels mais aussi les potentielles futures menaces
+
                         if alignement >= 3 and espaces + alignement >= 5:
                             score_defensif += malus_defensif * (alignement ** 2)  # Renforce la pénalité basée sur l'alignement
 
@@ -329,7 +329,6 @@ class Evaluation:
 
         Sortie:
             score (int): Score calculé basé sur l'alignement des pierres.
-
         """
         score = 0
         directions = [(0, 1), (1, 0), (1, 1), (-1, 1)]

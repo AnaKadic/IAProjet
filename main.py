@@ -3,24 +3,36 @@ from joueur.joueur import JoueurHumain
 from strategie.minmax import MinimaxStrategy
 from strategie.evaluation import Evaluation
 from colorama import Fore, Style, init
-
-# Initialise Colorama pour permettre l'utilisation de couleurs dans la console
-init(autoreset=True)
 import os
+
+
+init(autoreset=True)
+
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
 def afficher_titre(titre):
     clear_screen()
-    print(f"{'-' * 60}\n{titre.center(60)}\n{'-' * 60}")
+    print( Fore.LIGHTBLACK_EX +f"{'-' * 60}\n{titre.center(60)}\n{'-' * 60}")
+    taille_titre = len(titre) + 4  # Ajoute de l'espace autour du titre
+    print(Style.BRIGHT + Fore.GREEN + '=' * taille_titre)
+    print(Fore.GREEN + f"| {titre} |")
+    print(Fore.GREEN + '=' * taille_titre + Style.RESET_ALL)
+
+    
 
 def afficher_menu_principal():
-    afficher_titre("Bienvenue dans le jeu de Gomoku!")
-    print("[1] Jouer contre l'IA")
-    print("[2] Règles du jeu")
-    print("[3] Quitter")
-    choix = input("\nVeuillez choisir une option: ")
+    # Affiche le titre en gris anthracite
+    afficher_titre(Fore.LIGHTBLACK_EX + "Bienvenue dans le jeu de Gomoku!" + Style.RESET_ALL)
+
+    # Options du menu en vert pour les numéros et gris pour le texte
+    print(Fore.GREEN + "[1]" + Fore.LIGHTBLACK_EX + " Jouer contre l'IA" + Style.RESET_ALL)
+    print(Fore.GREEN + "[2]" + Fore.LIGHTBLACK_EX + " Règles du jeu" + Style.RESET_ALL)
+    print(Fore.GREEN + "[3]" + Fore.LIGHTBLACK_EX + " Quitter" + Style.RESET_ALL)
+
+    # Invite de commande en gris anthracite
+    choix = input(Fore.GREEN  + "Veuillez choisir une option: " + Style.RESET_ALL)
 
     if choix == '1':
         debuter_partie()
@@ -28,45 +40,52 @@ def afficher_menu_principal():
         afficher_regles()
         afficher_menu_principal()  # Retour au menu après affichage des règles
     elif choix == '3':
-        print("Merci d'avoir joué ! À bientôt.")
+        print(Fore.LIGHTBLACK_EX + "Merci d'avoir joué ! À bientôt." + Style.RESET_ALL)
         exit()
     else:
-        print("Choix invalide, veuillez réessayer.")
+        print(Fore.LIGHTRED_EX + "Choix invalide, veuillez réessayer." + Style.RESET_ALL)
         afficher_menu_principal()
 
-
 def afficher_regles():
-    afficher_titre("Règles du jeu")
-    print("Le Gomoku se joue sur un plateau de 15x15 cases.")
-    print("Le but du jeu est d'aligner cinq pierres de sa couleur.")
-    print("Les alignements peuvent être horizontaux, verticaux ou diagonaux.")
-    input("\nAppuyez sur Entrée pour retourner au menu principal...")
-    afficher_menu_principal()
-    print("Début de la partie : Vous êtes 'N', l'IA est 'B'.")
-    difficulte = input("Choisissez la difficulté de l'IA (facile, moyen, difficile): ").lower()
+    afficher_titre("Règles du jeu Gomoku")
 
-    while difficulte not in ['facile', 'moyen', 'difficile']:
-        print("Difficulté non reconnue. Veuillez choisir entre facile, moyen et difficile:")
-        
-        difficulte = input().lower()
+    print(Fore.YELLOW + "\nObjectif du jeu:" + Style.RESET_ALL)
+    print("Le but est d'aligner exactement cinq de ses pierres, horizontalement, verticalement ou diagonalement.")
+
+    print(Fore.YELLOW + "\nDéroulement de la partie:" + Style.RESET_ALL)
+    print("Les joueurs placent à tour de rôle une pierre sur une intersection vide du plateau. Les noirs débutent toujours.")
+
+    print(Fore.YELLOW + "\nComment gagner:" + Style.RESET_ALL)
+    print("Aligner cinq de ses pierres sans interruption. Les alignements de plus de cinq pierres ne comptent pas.")
+
+    print(Fore.YELLOW + "\nFin de la partie:" + Style.RESET_ALL)
+    print("Lorsqu'un joueur gagne par un alignement de cinq ou si le plateau est plein, la partie est nulle si aucun joueur n'a gagné.")
+
+    print(Fore.LIGHTBLUE_EX + "\nPour débuter une partie, choisissez la difficulté de l'IA:" + Style.RESET_ALL)
+    print("facile, moyen ou difficile (tapez le mot correspondant).")
+
+    input(Fore.CYAN + "\nAppuyez sur Entrée pour retourner au menu principal..." + Style.RESET_ALL)
+
+
+
 
 def debuter_partie():
     clear_screen()
     joueur_couleur = 'N'  # Suppose que le joueur humain joue avec les blancs
     ia_couleur = 'B'      # L'IA joue avec les noirs
 
-    print(f"\nDébut de la partie:")
-    print(f"Vous êtes les pierres blanches {Fore.WHITE + '○' + Style.RESET_ALL}.")
-    print(f"L'IA est les pierres noires {Fore.BLACK + '●' + Style.RESET_ALL}.\n")
+    print(Fore.LIGHTBLACK_EX + "\nDébut de la partie:")
+    print(Fore.LIGHTBLACK_EX + "Vous êtes les pierres blanches {Fore.WHITE + '○' + Style.RESET_ALL}.")
+    print(Fore.LIGHTBLACK_EX + "L'IA est les pierres noires {Fore.BLACK + '●' + Style.RESET_ALL}.\n")
 
-    difficulte = input("Choisissez la difficulté de l'IA (facile, moyen, difficile): ").lower()
+    difficulte = input(Fore.LIGHTBLACK_EX + "Choisissez la difficulté de l'IA (facile, moyen, difficile): ").lower()
     print("\n")
     while difficulte not in ['facile', 'moyen', 'difficile']:
         print("Difficulté non reconnue. Veuillez choisir entre facile, moyen et difficile:")
         difficulte = input().lower()
 
     plateau_de_jeu = Plateau()
-    joueur_n = JoueurHumain(joueur_couleur)  # Assurez-vous que JoueurHumain peut prendre une couleur
+    joueur_n = JoueurHumain(joueur_couleur)  
     joueur_b = MinimaxStrategy(plateau_de_jeu, ia_couleur, difficulte)  # L'IA prend la couleur noire
     strategie_ia = MinimaxStrategy(plateau_de_jeu, ia_couleur, difficulte)
 

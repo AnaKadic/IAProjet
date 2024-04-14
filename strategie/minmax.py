@@ -56,7 +56,7 @@ class MinimaxStrategy:
                             nx, ny = x + dx, y + dy
                             if 0 <= nx < plateau.taille and 0 <= ny < plateau.taille and plateau.plateau[nx][ny] == '.':
                                 coords.append((nx, ny))
-        return list(set(coords))  # Remove duplicates
+        return list(set(coords))  
 
     def choisir_coup(self):
         """
@@ -103,7 +103,7 @@ class MinimaxStrategy:
             tuple: Coordonnées du meilleur coup associé à ce score, ou None si aucun coup n'est trouvé.
         """
         if profondeur == 0 or plateau.est_jeu_termine():
-            return self.evaluation.evaluer(plateau), None  # Use the dynamic evaluation based on difficulty
+            return self.evaluation.evaluer(plateau), None 
 
         if maximisant:
             valeur_max = float('-inf')

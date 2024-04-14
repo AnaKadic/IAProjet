@@ -1,3 +1,8 @@
+from colorama import Fore, Style, init
+
+
+init(autoreset=True)
+
 class Joueur:
 
     """
@@ -45,6 +50,6 @@ class JoueurHumain(Joueur):
         Retourne:
             tuple: Un tuple (ligne, colonne) représentant les coordonnées du coup.
         """
-        ligne = int(input("\n Entrez votre ligne : ")) -1
-        colonne = int(input("Entrez votre colonne : ")) -1
+        ligne = int(input(Fore.RED +"\n Entrez votre ligne : ")) -1
+        colonne = int(input(Fore.RED +"Entrez votre colonne : ")) -1
         return ligne, colonne

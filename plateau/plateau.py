@@ -1,10 +1,10 @@
+import copy
 from colorama import Fore, Style, init
 
 
 init(autoreset=True)
 
 class Plateau:
-
     """
     Représente le plateau de jeu pour un jeu de plateau du GOMOKU
     Gère le stockage des pièces sur le plateau et effectue des opérations telles que placer des pierres et vérifier les conditions de victoire.
@@ -50,7 +50,7 @@ class Plateau:
         """
         Affiche le plateau de jeu dans la console avec des couleurs et des symboles.
         """
-        PIERRE_NOIRE = Fore.BLACK + '●' + Style.RESET_ALL  # Noir pour les pierres noires
+        PIERRE_NOIRE = Fore.LIGHTBLACK_EX  + '●' + Style.RESET_ALL  # Noir pour les pierres noires
         PIERRE_BLANCHE = Fore.WHITE + '○' + Style.RESET_ALL  # Blanc pour les pierres blanches
         VIDE = Fore.RED + '.' + Style.RESET_ALL  # Rouge pour les vides
 
@@ -81,7 +81,7 @@ class Plateau:
         
     def placer_pierre(self, ligne, colonne, couleur):
         """
-        Place une pierre de la couleur spécifiée à l'emplacement donné si la case est vide.
+        Place une pierre de la couleur spécifiée à l'emplacement donné si la case est vide et si les indices sont valides.
 
         Entrée:
             ligne (int): L'indice de la ligne où placer la pierre.
@@ -91,9 +91,14 @@ class Plateau:
         Retourne:
             bool: True si la pierre a été placée avec succès, sinon False.
         """
-        if self.plateau[ligne][colonne] == '.':
-            self.plateau[ligne][colonne] = couleur
-            return True
+        if 0 <= ligne < self.taille and 0 <= colonne < self.taille:  # Vérifie si les indices sont dans les limites
+            if self.plateau[ligne][colonne] == '.':
+                self.plateau[ligne][colonne] = couleur
+                return True
+            else:
+                print(Fore.RED + "Erreur: La case est déjà occupée.")
+        else:
+            print(Fore.RED + "Erreur: Les indices sont hors des limites du plateau.")
         return False
 
     def verifier_victoire(self, ligne, colonne, couleur):
@@ -108,12 +113,11 @@ class Plateau:
         Retourne:
             bool: True si le coup est gagnant, sinon False.
         """
-        directions = [(0, 1), (1, 0), (1, 1), (-1, 1)] 
+        directions = [(0, 1), (1, 0), (1, 1), (-1, 1)]
         for delta_x, delta_y in directions:
             if self.verifier_direction(ligne, colonne, couleur, delta_x, delta_y):
-                return True
+                return True  # Arrête la recherche dès qu'une victoire est détectée
         return False
-
 
     def verifier_direction(self, ligne, colonne, couleur, delta_x, delta_y):
         """
@@ -129,17 +133,24 @@ class Plateau:
         Retourne:
             bool: True si une ligne de cinq pierres de même couleur est formée, sinon False.
         """
-        compteur = 0
-        for i in range(-4, 5):
+        compteur = 1  # Compte la pierre initiale
+        # Vérifie dans la direction positive
+        for i in range(1, 5):
             x = ligne + i * delta_x
             y = colonne + i * delta_y
             if 0 <= x < self.taille and 0 <= y < self.taille and self.plateau[x][y] == couleur:
                 compteur += 1
-                if compteur == 5:
-                    return True
             else:
-                compteur = 0
-        return False
+                break
+        # Vérifie dans la direction négative
+        for i in range(1, 5):
+            x = ligne - i * delta_x
+            y = colonne - i * delta_y
+            if 0 <= x < self.taille and 0 <= y < self.taille and self.plateau[x][y] == couleur:
+                compteur += 1
+            else:
+                break
+        return compteur >= 5
     
     def est_jeu_termine(self):
         """
@@ -147,7 +158,7 @@ class Plateau:
         Les conditions de victoire doivent être vérifiées séparément après chaque coup.
 
         Retourne :
-            True si le plateau est complet, False sinon.
+            bool : True si le plateau est complet, False sinon.
         """
         for ligne in self.plateau:
             if '.' in ligne:
@@ -171,7 +182,7 @@ class Plateau:
     def simuler_coup(self, coup, couleur):
         """
         Simule un coup sur le plateau sans modifier l'état actuel du plateau.
-        Crée une nouvelle instance de Plateau avec le coup appliqué pour évaluation ou autres besoins sans affecter le plateau principal.
+        Utilise `deepcopy` pour une copie complète du plateau, permettant la manipulation sans affecter l'état original.
 
         Paramètres:
             coup (tuple): Tuple de (ligne, colonne) indiquant où la pierre est placée.
@@ -180,8 +191,8 @@ class Plateau:
         Retourne:
             Plateau: Une nouvelle instance de Plateau représentant l'état après le coup.
         """
-        # Crée une copie du plateau
-        nouveau_plateau = [ligne[:] for ligne in self.plateau]
+        # Crée une copie profonde du plateau
+        nouveau_plateau = copy.deepcopy(self.plateau)
         
         # Applique le coup sur la copie
         ligne, colonne = coup
@@ -193,8 +204,15 @@ class Plateau:
         
         return plateau_temp
     
+   
+
+    def est_plein(self):
+        """Retourne True si toutes les cases du plateau sont remplies."""
+        return all(cell != '.' for row in self.plateau for cell in row)
+    
+    """
     def evaluer_plateau(self, plateau):
-        """
+        '''
         Évalue le plateau actuel selon un ensemble de configurations prédéfinies pour déterminer le score.
         Cette méthode est un squelette et doit être complétée avec des règles d'évaluation spécifiques pour être fonctionnelle.
 
@@ -203,7 +221,7 @@ class Plateau:
 
         Retourne:
             int: Le score évalué du plateau basé sur les configurations prédéfinies.
-        """
+        '''
         score = 0
         configurations = {
             'xxxxx': 100000,
@@ -213,3 +231,4 @@ class Plateau:
         }
 
         return score
+    """

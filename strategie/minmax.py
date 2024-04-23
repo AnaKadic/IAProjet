@@ -1,6 +1,8 @@
 import numpy as np
 import random
 from strategie.evaluation import Evaluation  
+from strategie.transposition_table import TableDeTransposition
+#from plateau.plateau import Plateau
 
 class MinimaxStrategy:
     """
@@ -35,6 +37,7 @@ class MinimaxStrategy:
         else:
             raise ValueError(f"Difficulté non reconnue: {difficulte}")
 
+        self.transposition_table = TableDeTransposition()  
         self.evaluation = Evaluation(plateau, couleur, difficulte)
 
     def generer_coups_possibles(self, plateau):
@@ -48,15 +51,18 @@ class MinimaxStrategy:
             list: Liste des tuples (x, y) représentant les coordonnées des coups possibles.
         """
         coords = []
-        for x in range(plateau.taille):
-            for y in range(plateau.taille):
-                if plateau.plateau[x][y] != '.':
-                    for dx in [-1, 0, 1]:
-                        for dy in [-1, 0, 1]:
-                            nx, ny = x + dx, y + dy
-                            if 0 <= nx < plateau.taille and 0 <= ny < plateau.taille and plateau.plateau[nx][ny] == '.':
-                                coords.append((nx, ny))
-        return list(set(coords))  
+        try:
+            for x in range(plateau.taille):
+                for y in range(plateau.taille):
+                    if plateau.plateau[x][y] != '.':
+                        for dx in [-1, 0, 1]:
+                            for dy in [-1, 0, 1]:
+                                nx, ny = x + dx, y + dy
+                                if 0 <= nx < plateau.taille and 0 <= ny < plateau.taille and plateau.plateau[nx][ny] == '.':
+                                    coords.append((nx, ny))
+        except IndexError as e:
+            print(f"Erreur d'index hors limite : {e}")
+        return list(set(coords))
 
     def choisir_coup(self):
         """
@@ -69,22 +75,27 @@ class MinimaxStrategy:
         meilleur_score = float('-inf')
         meilleur_coup = None
 
-        coups_possibles = self.generer_coups_possibles(self.plateau)
+        try:
+            coups_possibles = self.generer_coups_possibles(self.plateau)
 
-        for coup in coups_possibles:
-            plateau_temp = self.plateau.simuler_coup(coup, self.couleur)
-            score, _ = self.minmax(plateau_temp, self.profondeur - 1, False, alpha, beta)
+            for coup in coups_possibles:
+                plateau_temp = self.plateau.simuler_coup(coup, self.couleur)
+                score, _ = self.minmax(plateau_temp, self.profondeur - 1, False, alpha, beta)
 
-            if score > meilleur_score:
-                meilleur_score = score
-                meilleur_coup = coup
-            alpha = max(alpha, score)
-            if beta <= alpha:
-                break
+                if score > meilleur_score:
+                    meilleur_score = score
+                    meilleur_coup = coup
+                alpha = max(alpha, score)
+                if beta <= alpha:
+                    break
+        except Exception as e:
+            print(f"Erreur inattendue lors du choix du coup : {e}")
+            meilleur_coup = self.choisir_coup_aleatoire(self.plateau)  # Fallback au coup aléatoire si erreur
+            if meilleur_coup is None:
+                print("Aucun coup possible trouvé après erreur.")
+                return None
 
-        if meilleur_coup is None:
-            meilleur_coup = self.choisir_coup_aleatoire(self.plateau)
-        return meilleur_coup
+        return meilleur_coup if meilleur_coup is not None else self.choisir_coup_aleatoire(self.plateau)
 
     def minmax(self, plateau, profondeur, maximisant, alpha, beta):
         """
@@ -102,35 +113,58 @@ class MinimaxStrategy:
             float: La valeur du meilleur score trouvé.
             tuple: Coordonnées du meilleur coup associé à ce score, ou None si aucun coup n'est trouvé.
         """
+        # Générer une clé unique pour la position actuelle pour la table de transposition
+        position_key = (str(plateau.plateau), profondeur, maximisant)
+        try:
+            result = self.transposition_table.rechercher(position_key)
+            if result is not None:
+                return result
+        except KeyError as e:
+            print(f"Erreur de clé dans la table de transposition: {e}")
+        except Exception as e:
+            print(f"Erreur inattendue lors de la recherche dans la table de transposition: {e}")
+
         if profondeur == 0 or plateau.est_jeu_termine():
-            return self.evaluation.evaluer(plateau), None 
+            try:
+                score = self.evaluation.evaluer(plateau)
+            except ValueError as e:
+                print(f"Erreur lors de l'évaluation du plateau: {e}")
+                return float('-inf'), None  # Ou une autre valeur par défaut selon la logique du jeu
+            self.transposition_table.sauvegarder(position_key, (score, None))
+            return score, None
+
 
         if maximisant:
-            valeur_max = float('-inf')
+            meilleur_score = float('-inf')
             meilleur_coup = None
             for coup in self.generer_coups_possibles(plateau):
                 plateau_temp = plateau.simuler_coup(coup, self.couleur)
-                valeur, _ = self.minmax(plateau_temp, profondeur - 1, False, alpha, beta)
-                if valeur > valeur_max:
-                    valeur_max = valeur
+                score, _ = self.minmax(plateau_temp, profondeur - 1, False, alpha, beta)
+                score = score[0] if isinstance(score, tuple) else score  # Modification ici
+                if score > meilleur_score:
+                    meilleur_score = score
                     meilleur_coup = coup
-                alpha = max(alpha, valeur)
+                alpha = max(alpha, score)
                 if beta <= alpha:
                     break
-            return valeur_max, meilleur_coup
+            self.transposition_table.sauvegarder(position_key, (meilleur_score, meilleur_coup))
+            return meilleur_score, meilleur_coup
         else:
-            valeur_min = float('inf')
+            meilleur_score = float('inf')
             meilleur_coup = None
             for coup in self.generer_coups_possibles(plateau):
                 plateau_temp = plateau.simuler_coup(coup, self.couleur_adverse)
-                valeur, _ = self.minmax(plateau_temp, profondeur - 1, True, alpha, beta)
-                if valeur < valeur_min:
-                    valeur_min = valeur
+                score, _ = self.minmax(plateau_temp, profondeur - 1, True, alpha, beta)
+                score = score[0] if isinstance(score, tuple) else score  # Modification ici
+                if score < meilleur_score:
+                    meilleur_score = score
                     meilleur_coup = coup
-                beta = min(beta, valeur)
-                if beta <= alpha:
+                beta = min(beta, score)
+                if alpha >= beta:
                     break
-            return valeur_min, meilleur_coup
+            self.transposition_table.sauvegarder(position_key, (meilleur_score, meilleur_coup))
+            return meilleur_score, meilleur_coup
+
 
     def choisir_coup_aleatoire(self, plateau):
         """

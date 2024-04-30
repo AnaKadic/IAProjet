@@ -77,7 +77,7 @@ def afficher_regles():
     afficher_menu_principal()
 
 def post_game_options():
-    print(Fore.LIGHTWHITE_EX + "Que souhaitez-vous faire ensuite ?")
+    print(Fore.LIGHTWHITE_EX + "\nQue souhaitez-vous faire ensuite ?\n")
     print(Fore.CYAN + "[1]" + Fore.LIGHTWHITE_EX + " Changer d'adversaire.")
     print(Fore.CYAN + "[2]" + Fore.LIGHTWHITE_EX + " Retourner au menu principal.")
     print(Fore.CYAN + "[3]" + Fore.LIGHTWHITE_EX + " Quitter le jeu.\n")

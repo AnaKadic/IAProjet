@@ -65,7 +65,7 @@ class Plateau:
             print(Fore.BLUE + "  +" + "---+" * self.taille + Style.RESET_ALL)
 
             # Affiche le numéro de la ligne à gauche du plateau et les barres verticales en vert
-            row_display = Fore.BLUE + f"{idx+1:2d} |"  # Vert pour le numéro de la ligne
+            row_display = Fore.BLUE + f"{idx+1:2d}| "  # Vert pour le numéro de la ligne
             row_display += " | ".join(
                 PIERRE_NOIRE if cell == 'B' else PIERRE_BLANCHE if cell == 'N' else VIDE for cell in ligne
             ) + " |" + Style.RESET_ALL
@@ -73,7 +73,7 @@ class Plateau:
             print(Fore.BLUE + row_display + Style.RESET_ALL)
 
         # Dernière ligne de séparation
-        print(Fore.BLUE + " +" + "---+" * self.taille + Style.RESET_ALL)
+        print(Fore.BLUE + "  +" + "---+" * self.taille + Style.RESET_ALL)
 
         
     def placer_pierre(self, ligne, colonne, couleur):

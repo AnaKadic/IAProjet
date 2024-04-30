@@ -38,7 +38,7 @@ def afficher_menu_principal():
         elif choix == '3':
             afficher_regles()
         elif choix == '4':
-            print(Fore.RED + "Merci d'avoir joué ! À bientôt." + Style.RESET_ALL)
+            print(Fore.MAGENTA + "Merci d'avoir joué ! À bientôt." + Style.RESET_ALL)
             exit()
         else:
             afficher_menu_principal()

@@ -50,11 +50,11 @@ class JoueurHumain(Joueur):
         """
         while True:
             try:
-                ligne = int(input(Fore.RED + "\nEntrez votre ligne : ")) - 1
-                colonne = int(input(Fore.RED + "Entrez votre colonne : ")) - 1
+                ligne = int(input(Fore.LIGHTWHITE_EX + "\nEntrez votre ligne : ")) - 1
+                colonne = int(input(Fore.LIGHTWHITE_EX + "Entrez votre colonne : ")) - 1
                 if ligne < 0 or ligne >= 15 or colonne < 0 or colonne >= 15:
-                    print(Fore.YELLOW + "Erreur : Veuillez entrer des valeurs entre 1 et 15.")
+                    print(Fore.RED + "Erreur : Veuillez entrer des valeurs entre 1 et 15.")
                 else:
                     return ligne, colonne
             except ValueError:
-                print(Fore.YELLOW + "Erreur : Veuillez entrer des nombres valides.")
+                print(Fore.RED + "Erreur : Veuillez entrer des nombres valides.")

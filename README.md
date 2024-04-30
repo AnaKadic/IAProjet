@@ -1,14 +1,12 @@
 # Projet IA - Jeu de Gomoku
 
 ## Auteurs
-KADIC Anaïs & Gravil Athenaïs
+KADIC Anaïs & GRAVIL Athenaïs
 
 ## Description du projet
 Ce projet, réalisé en Licence 3 à l'Université Paris-Cité, vise à développer une intelligence artificielle capable de jouer au jeu de Gomoku contre un joueur humain. Le Gomoku est un jeu de stratégie où le but est d'aligner cinq pierres de sa couleur sur un plateau de jeu.
 
 ## Objectif 
-
-## Objectifs du Projet
 
 Le projet vise à développer et à tester une intelligence artificielle pour le jeu de Gomoku, en accomplissant les tâches suivantes :
 
@@ -41,9 +39,9 @@ Le projet est organisé en plusieurs dossiers et fichiers clés :
 - **joueur/**: Gère les interactions et les décisions des joueurs humains et de l'IA.
 
 - **strategie/**:
-  - Implémente les algorithmes Minimax et Alpha-Bêta.
+  - Implémente les **algorithmes Minimax et Alpha-Bêta**.
   - Contient la classe de **transposition** qui aide à mémoriser les états déjà évalués pour optimiser les calculs de l'IA.
-  - Inclut une classe **d'évaluation** qui fournit différents niveaux d'évaluation stratégique selon la difficulté de l'IA choisie.
+  - Inclut une classe **d'évaluation** qui fournit différents niveaux d'évaluation selon la difficulté de l'IA choisie.
 
 - **tournoi/**: Gère l'organisation de matchs et de tournois entre l'IA et les joueurs humains.
 
@@ -52,9 +50,9 @@ Le projet est organisé en plusieurs dossiers et fichiers clés :
 
 ## Fonctionnalités
 
-Le jeu de Gomoku implémenté dans ce projet propose plusieurs fonctionnalités accessibles dès le lancement de l'application. Voici les principales options disponibles dans le menu initial :
+ Ce projet propose plusieurs fonctionnalités accessibles dès le lancement de l'application. Voici les principales options disponibles dans le menu initial :
 
-- **Compétition IA contre IA** : Lance une série de matchs automatisés entre différentes configurations d'intelligence artificielle. Cela permet d'évaluer et de comparer les performances de diverses stratégies et niveaux de difficulté.
+- **Compétition IA contre IA** : Lance une série de matchs automatisés entre différentes configurations d'intelligence artificielle.
 
 - **Jouer contre l'IA** : Permet à un joueur humain de défier l'IA dans une partie de Gomoku, offrant une interaction directe avec l'algorithme de jeu.
 
@@ -62,13 +60,13 @@ Le jeu de Gomoku implémenté dans ce projet propose plusieurs fonctionnalités 
 
 Le jeu propose quatre niveaux de difficulté, permettant aux joueurs de toutes compétences de trouver un défi adapté à leur niveau :
 
-- **Très Facile** : Niveau le plus bas, utilisant des décisions aléatoires simples. Idéal pour débutanter ou pour une partie rapide.
+- **Très Facile** : Niveau le plus bas, utilisant des décisions aléatoires simples.
 
-- **Facile** : Utilise des heuristiques de base et une profondeur de recherche limitée à 2, offrant un bon point de départ pour les nouveaux joueurs.
+- **Facile** : Utilise des heuristiques de base et une profondeur de recherche limitée à 2.
 
-- **Moyen** : Augmente la profondeur de recherche à 3, introduisant une stratégie légèrement plus difficile.
+- **Moyen** : Augmente la profondeur de recherche à 3.
 
-- **Difficile** : Le niveau le plus dure avec une profondeur de recherche de 4, destiné aux joueurs expérimentés cherchant à tester leurs compétences contre une IA avancée et stratégique.
+- **Difficile** : Le niveau le plus dure avec une profondeur de recherche de 4, destiné aux joueurs expérimentés cherchant à tester leurs compétences contre une IA avancée.
 
 Chaque niveau de difficulté ajuste la profondeur de recherche et les fonctions d'évaluation utilisées par l'IA.
 

@@ -52,7 +52,7 @@ class Plateau:
         """
         PIERRE_NOIRE = Fore.BLACK  + '●' + Style.RESET_ALL  # Noir pour les pierres noires
         PIERRE_BLANCHE = Fore.WHITE + '○' + Style.RESET_ALL  # Blanc pour les pierres blanches
-        VIDE = Fore.BLACK + '.' + Style.RESET_ALL  # Rouge pour les vides
+        VIDE = ' ' + Style.RESET_ALL  # Rouge pour les vides
 
         # En-tête avec les numéros de colonne
         espacement_entre_colonnes = "  "

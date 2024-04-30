@@ -1,7 +1,6 @@
 from plateau.plateau import Plateau
 from joueur.joueur import JoueurHumain
 from strategie.minmax import MinimaxStrategy
-#from strategie.evaluation import Evaluation
 from tournoi.gestionnaire_tournoi import GestionnaireTournoi
 from joueur.joueur_ia import JoueurIA
 from colorama import Fore, Style, init
@@ -15,7 +14,7 @@ def clear_screen():
 def afficher_titre(titre):
     clear_screen()
 
-    taille_titre = len(titre) + 4  # Ajoute de l'espace autour du titre
+    taille_titre = len(titre) + 4 
     print(Style.BRIGHT + Fore.GREEN + '=' * taille_titre)
     print(Fore.GREEN + f"| {titre} |")
     print(Fore.GREEN + '=' * taille_titre + Style.RESET_ALL)
@@ -45,22 +44,23 @@ def afficher_menu_principal():
         afficher_menu_principal()
 
 def organiser_tournoi():
-    plateau = Plateau()  # Créez un plateau de jeu unique pour tous les matchs si nécessaire
+    plateau = Plateau()  # Créez un plateau de jeu pour tous les matchs 
     joueurs = [
+        #JoueurIA('B', 'tres_facile', plateau, 'IA Très Facile', est_ia=True),
         JoueurIA('B', 'facile', plateau, 'IA Facile', est_ia=True),
-        JoueurIA('N', 'moyen', plateau, 'IA Moyen', est_ia=True),
-        JoueurIA('B', 'difficile', plateau, 'IA Difficile', est_ia=True)
+        #JoueurIA('N', 'moyen', plateau, 'IA Moyen', est_ia=True),
+        JoueurIA('N', 'difficile', plateau, 'IA Difficile', est_ia=True)
     ]
     gestionnaire = GestionnaireTournoi(joueurs)
     gestionnaire.organiser_tournoi()
     gestionnaire.afficher_resultats()
+    input(Fore.CYAN + "\nAppuyez sur Entrée pour retourner au menu principal..." + Style.RESET_ALL)
+    afficher_menu_principal()
     
-
 
 def afficher_regles():
     afficher_titre("Règles du jeu Gomoku")
 
-    # Utilisation de différentes couleurs pour chaque section
     print(Fore.YELLOW + "Objectif du jeu:" + Style.RESET_ALL)
     print("Le Gomoku, parfois appelé 'Five in a Row', se joue sur un plateau carré, habituellement de 19x19 lignes, mais parfois de 15x15 pour des parties plus rapides. L'objectif est d'aligner exactement cinq de ses pierres, horizontalement, verticalement ou diagonalement.")
 
@@ -74,7 +74,8 @@ def afficher_regles():
     print("La partie se termine lorsqu'un joueur aligne cinq pierres ou si le plateau est complètement rempli sans qu'aucun joueur n'ait gagné, auquel cas la partie est déclarée nulle.")
 
     input(Fore.CYAN + "\nAppuyez sur Entrée pour retourner au menu principal..." + Style.RESET_ALL)
-    
+    afficher_menu_principal()
+
 def post_game_options():
     print("Options : ")
     print(Fore.CYAN + "Que souhaitez-vous faire ensuite ?")
@@ -90,7 +91,7 @@ def post_game_options():
 
 
     if choix == '1':
-        debuter_partie()  # permet de choisir une nouvelle difficulté.
+        debuter_partie()  
     elif choix == '2':
         afficher_menu_principal()
     elif choix == '3':
@@ -104,16 +105,17 @@ def debuter_partie():
     print(Fore.CYAN + "L'IA est les pierres noires ( ● ).\n")
 
     print(Fore.CYAN + "Choisissez la difficulté de l'IA :")
+    print(Fore.CYAN + "[0]" + Fore.WHITE + " Très Facile - L'IA joue aléatoirement.")
     print(Fore.CYAN + "[1]" + Fore.WHITE + " Facile - Idéal pour bien débuter :).")
-    print(Fore.CYAN + "[2]" + Fore.WHITE + " Moyen - Un bon défi de niveau Moyen.")
+    print(Fore.CYAN + "[2]" + Fore.WHITE + " Moyen - Un bon défi de niveau moyen.")
     print(Fore.CYAN + "[3]" + Fore.WHITE + " Difficile - Préparez-vous à un vrai défi !.\n")
     print(Fore.CYAN + "[4]" + Fore.WHITE + " Retour au menu principal.\n")
     
-    difficulte_options = {'1': 'facile', '2': 'moyen', '3': 'difficile', '4': 'menu'}
+    difficulte_options = {'0': 'tres_facile', '1': 'facile', '2': 'moyen', '3': 'difficile', '4': 'menu'}
     choix = input(Fore.CYAN + "Entrez le numéro de votre choix : " + Style.RESET_ALL)
     
     while choix not in difficulte_options:
-        print(Fore.RED + "Choix invalide. Veuillez choisir entre 1 (Facile), 2 (Moyen), et 3 (Difficile), ou 4 pour retourner au menu :")
+        print(Fore.RED + "Choix invalide. Veuillez choisir entre 0 (Très Facile), 1 (Facile), 2 (Moyen), et 3 (Difficile), ou 4 pour retourner au menu :")
         choix = input().lower()
 
     if difficulte_options[choix] == 'menu':
@@ -122,8 +124,8 @@ def debuter_partie():
     
     difficulte = difficulte_options[choix]
     plateau_de_jeu = Plateau()
-    joueur_couleur = 'B'  # L'IA joue avec les noirs
-    ia_couleur = 'N'      # Le joueur humain joue avec les blancs
+    joueur_couleur = 'N'  # L'IA joue avec les noirs
+    ia_couleur = 'B'      # Le joueur humain joue avec les blancs
 
     joueur_n = JoueurHumain(ia_couleur)  # Humain joue blanc
     strategie_ia = MinimaxStrategy(plateau_de_jeu, joueur_couleur, difficulte)  # L'IA prend la couleur noire
@@ -151,8 +153,10 @@ def debuter_partie():
 
         if plateau_de_jeu.verifier_victoire(ligne, colonne, joueur_actuel.couleur):
             plateau_de_jeu.afficher_plateau()
-            gagnant = "Vous" if joueur_actuel == joueur_n else "l'IA"
-            print(f"{gagnant} a gagné !")
+            if isinstance(joueur_actuel, JoueurHumain):
+                print("Vous avez gagné !")
+            else:
+                print("L'IA a gagné !")
             break
         joueur_actuel = strategie_ia if joueur_actuel == joueur_n else joueur_n
 
@@ -160,6 +164,7 @@ def debuter_partie():
         print("Match nul ! Le plateau est plein.")
     
     post_game_options()
+
 
 if __name__ == "__main__":
     afficher_menu_principal()

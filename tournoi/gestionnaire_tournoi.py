@@ -13,7 +13,7 @@ class GestionnaireTournoi:
         scores (dict): Dictionnaire des scores des joueurs.
     """
 
-    def __init__(self, joueurs, nb_parties_par_match=3):
+    def __init__(self, joueurs, nb_parties_par_match=1):
         """
         Initialise le gestionnaire du tournoi avec une liste de joueurs et le nombre de parties par match.
         Entrée:
@@ -38,14 +38,17 @@ class GestionnaireTournoi:
             dict: Un dictionnaire contenant les résultats du match (nombre de victoires, nuls, etc.).
         """
         resultats_match = {'victoires_joueur1': 0, 'victoires_joueur2': 0, 'nuls': 0}
-        for _ in range(self.nb_parties_par_match):
+        couleurs = [('N', 'B'), ('B', 'N')]  # Alternance des couleurs pour chaque match
+        for couleur1, couleur2 in couleurs:
             plateau = Plateau()
+            joueur1.couleur = couleur1
+            joueur2.couleur = couleur2
             simulateur = SimulateurPartie(joueur1, joueur2, plateau)
             gagnant = simulateur.jouer_partie()
-            if gagnant == joueur1.couleur:
+            if gagnant == couleur1:
                 resultats_match['victoires_joueur1'] += 1
                 self.scores[joueur1.nom] += 3
-            elif gagnant == joueur2.couleur:
+            elif gagnant == couleur2:
                 resultats_match['victoires_joueur2'] += 1
                 self.scores[joueur2.nom] += 3
             else:
@@ -59,10 +62,11 @@ class GestionnaireTournoi:
         Organise et exécute le tournoi complet entre tous les joueurs.
         """
         self.reinitialiser_resultats()
-        for joueur1 in self.joueurs:
-            for joueur2 in self.joueurs:
-                if joueur1 != joueur2:
-                    self.jouer_et_enregistrer_matchs(joueur1, joueur2)
+        total_matches = 30
+        for _ in range(total_matches // 2):  # Chaque match est joué deux fois, donc diviser par 2
+            for joueur1, joueur2 in [(self.joueurs[0], self.joueurs[1]), (self.joueurs[1], self.joueurs[0])]:
+                resultats = self.organiser_match(joueur1, joueur2)
+                self.resultats.append((joueur1, joueur2, resultats))
 
     def jouer_et_enregistrer_matchs(self, joueur1, joueur2):
         """
@@ -72,7 +76,7 @@ class GestionnaireTournoi:
             joueur1 (JoueurIA): Le premier joueur.
             joueur2 (JoueurIA): Le second joueur.
         """
-        for _ in range(100): # 50 matchs par paire, comme requis par les spécifications du projet.
+        for _ in range(1): 
             resultats = self.organiser_match(joueur1, joueur2)
             self.resultats.append((joueur1, joueur2, resultats))
             resultats = self.organiser_match(joueur2, joueur1)

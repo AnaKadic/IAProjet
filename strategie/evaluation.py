@@ -1,6 +1,6 @@
 # strategies.py
-from plateau.plateau import Plateau
-import numpy as np
+#from plateau.plateau import Plateau
+#import numpy as np
 
 class Evaluation:
     """
@@ -31,12 +31,18 @@ class Evaluation:
             difficulte (str): Niveau de difficulté ('facile', 'moyen', 'difficile').
 
         """
-        valid_difficulties = ['facile', 'moyen', 'difficile']
+        valid_difficulties = ['tres_facile', 'facile', 'moyen', 'difficile']
         if difficulte not in valid_difficulties:
             raise ValueError(f"Difficulté '{difficulte}' non reconnue. Choix valides: {valid_difficulties}")
         self.difficulte = difficulte
-        self.profondeur = 3 if difficulte == 'difficile' else 2 if difficulte == 'moyen' else 1
+        self.profondeur = {
+            'tres_facile': 1,
+            'facile': 2,
+            'moyen': 3,
+            'difficile': 4
+        }[difficulte]
         self.evaluer = getattr(self, f'evaluer_{difficulte}')
+
 
     # POUR UN NIVEAU FACILE
     def evaluer_facile(self, plateau):
@@ -53,17 +59,16 @@ class Evaluation:
         score = 0
         nb_coups_joues = len([p for row in plateau for p in row if p != '.'])  # Compte les coups déjà joués
 
-        # Évaluation défensive
-        score_defensif = self.evaluer_defense_simple(plateau, self.couleur_adverse)
-        if nb_coups_joues > 6 and score_defensif < 0:  # Ne commence à bloquer qu'après les premiers échanges
-            score += score_defensif  # Applique un score défensif s'il y a des menaces
+        # Évaluation défensive seulement pour les six premiers coups de chaque joueur
+        if nb_coups_joues <= 12:  # Chaque joueur a joué six fois
+            score_defensif = self.evaluer_defense_simple(plateau, self.couleur_adverse)
+            if score_defensif < 0:  # Appliquer la défense seulement si elle est nécessaire
+                score += score_defensif
 
-        # Évaluation offensive, activée particulièrement s'il n'y a pas de menaces immédiates
-        if score_defensif >= 0 or nb_coups_joues <= 6:  # Plus agressif si le jeu est au début ou pas de menace
-            score += self.evaluer_attaques_potentielles(plateau, self.couleur)
+        # Évaluation offensive constante, indépendamment du nombre de coups
+        score += self.evaluer_attaques_potentielles(plateau, self.couleur)
 
-        return score # Défendre si la menace est plus critique
-
+        return score
     def evaluer_defense_simple(self, plateau, couleur_adverse):
         """
         Évalue défensivement pour bloquer les menaces adverses de victoir.
@@ -161,7 +166,7 @@ class Evaluation:
             if alignement > 2:  # Augmente la pondération si un alignement gagnant est possible
                 score += (alignement ** 2) + potentiel 
             else:
-                score += alignement + potentiel  # Pondération normale pour les alignements courts
+                score += alignement + potentiel  
         return score
     
     def compter_potentiel(self, plateau, x, y, dx, dy, couleur):
@@ -222,15 +227,17 @@ class Evaluation:
             score (int): Score total basé sur l'évaluation des configurations des pierres sur le plateau.
         """
         score = 0
+        nb_coups_joues = len([p for row in plateau for p in row if p != '.'])
         for ligne in range(plateau.taille):
             for colonne in range(plateau.taille):
                 if plateau.plateau[ligne][colonne] == self.couleur:
                     score += self.evaluer_alignement(plateau, ligne, colonne, self.couleur)
                 elif plateau.plateau[ligne][colonne] != '.':
                     score -= self.evaluer_alignement(plateau, ligne, colonne, plateau.plateau[ligne][colonne])
-        
-        # Ajout d'une évaluation défensive
-        score += self.evaluer_besoins_defensifs(plateau, self.couleur)
+
+        # Ajout d'une évaluation défensive, qui diminue après le 15e coup
+        if nb_coups_joues <= 30:  # Diminue après 15 coups de chaque joueur
+            score += self.evaluer_besoins_defensifs(plateau, self.couleur)
 
         return score
     
@@ -273,9 +280,9 @@ class Evaluation:
         """
         score_defensif = 0
         couleur_adverse = 'N' if couleur == 'B' else 'B'
-        threat_multiplier = -100  
+        threat_multiplier = -50  # Réduction de l'effet de la défense après 15 coups
         directions = [(0, 1), (1, 0), (1, 1), (-1, 1)]
-    
+
         for ligne in range(plateau.taille):
             for colonne in range(plateau.taille):
                 if plateau.plateau[ligne][colonne] == couleur_adverse:
@@ -294,7 +301,7 @@ class Evaluation:
                                 break
                         if alignement + espaces >= 4:
                             score_defensif += threat_multiplier * (alignement ** 2)
-    
+
         return score_defensif
     
 
@@ -312,7 +319,7 @@ class Evaluation:
         score = 0
         menaces_potentielles = self.analyser_menaces_multiples(plateau, self.couleur_adverse)
         if menaces_potentielles:
-            # Applique une pénalité sévère si des menaces adverses sont détectées.
+            # Applique une pénalité si des menaces adverses sont détectées.
             score -= 1000 * len(menaces_potentielles)
 
         # Parcourt chaque case du plateau pour calculer le score basé sur les positions actuelles.
@@ -339,11 +346,11 @@ class Evaluation:
             list: Liste des coordonnées où des menaces potentielles sont détectées.
         """
         menaces = []
-        directions = [(0, 1), (1, 0), (1, 1), (-1, 1)]  # Définir les directions ici
+        directions = [(0, 1), (1, 0), (1, 1), (-1, 1)]  # les directions 
         for x in range(plateau.taille):
             for y in range(plateau.taille):
                 if plateau.plateau[x][y] == '.':
-                    for dx, dy in directions:  # Ajouter cette boucle pour vérifier chaque direction
+                    for dx, dy in directions: # verifie chaque direction
                         if self.detecter_menace(plateau, x, y, dx, dy, couleur, 4):
                             menaces.append((x, y))
         return menaces
@@ -362,22 +369,20 @@ class Evaluation:
             int: Score basé sur le potentiel d'alignement à partir de cette position.
         """
         score = 0
-        # Évaluation basée sur les alignements potentiels à partir de cette position
         directions = [(0, 1), (1, 0), (1, 1), (-1, 1)]
         for dx, dy in directions:
-            alignement = 1  # Compte la pierre courante
-            for i in range(1, 5):  # Regarde jusqu'à quatre espaces de chaque côté
+            alignement = 1  
+            for i in range(1, 5):  
                 nx, ny = ligne + i * dx, colonne + i * dy
                 if 0 <= nx < plateau.taille and 0 <= ny < plateau.taille and plateau.plateau[nx][ny] == couleur:
                     alignement += 1
                 else:
                     break
-            score += 10 ** alignement  # Applique un poids exponentiel pour favoriser les alignements longs
+            score += 10 ** alignement 
         return score
 
     def evaluer_formations_ouvertes(self, plateau, couleur):
         score = 0
-        # Évaluation des formations qui permettent des extensions dans plusieurs directions
         for x in range(plateau.taille):
             for y in range(plateau.taille):
                 if plateau.plateau[x][y] == couleur:
@@ -402,7 +407,7 @@ class Evaluation:
         for dx, dy in directions:
             open_ends = 0
             ligne = []
-            for i in range(-4, 5):  # Examine jusqu'à quatre cases dans chaque direction à partir de la pierre
+            for i in range(-4, 5): 
                 nx, ny = x + i * dx, y + i * dy
                 if 0 <= nx < plateau.taille and 0 <= ny < plateau.taille:
                     if plateau.plateau[nx][ny] == couleur:
@@ -415,7 +420,6 @@ class Evaluation:
                 else:
                     break  # Hors des limites du plateau
 
-            # Une formation ouverte est plus puissante si elle a des extrémités ouvertes des deux côtés
             if len(ligne) >= 2 and open_ends > 0:
                 ouverture_key = tuple(sorted(ligne))
                 if ouverture_key not in ouvertures:
@@ -426,8 +430,51 @@ class Evaluation:
         # Calculer le score en fonction du nombre d'ouvertures et de leur potentiel
         for key, value in ouvertures.items():
             if len(key) >= 3:
-                score += 50 * value  # Plus la ligne est longue, plus elle est valorisée
+                score += 50 * value  
             elif len(key) == 2:
                 score += 20 * value
 
+        return score
+
+
+    #NIVEAU TRES FACILE
+    def evaluer_tres_facile(self, plateau):
+        """
+        Évalue le plateau de manière simple en comptant les pierres alignées directement pour la couleur spécifiée.
+
+        Entrée:
+            plateau (Plateau): L'état actuel du plateau de jeu.
+
+        Sortie:
+            score (int): Score basé sur le nombre de pierres alignées directement.
+
+       """
+        return self.compter_pierres_alignees(plateau, self.couleur)
+    
+    def compter_pierres_alignees(self, plateau, couleur):
+        """
+        Calcule le nombre de pierres alignées directement en quatre directions (horizontal, vertical et deux diagonales),
+        augmentant le score pour chaque alignement trouvé.
+
+        Entrée:
+            plateau (Plateau): L'état actuel du plateau de jeu.
+            couleur (str): Couleur des pierres à évaluer.
+
+        Sortie:
+            score (int): Total des pierres alignées pour la couleur spécifiée.
+        """
+        score = 0
+        directions = [(0, 1), (1, 0), (1, 1), (-1, 1)]  # Horizontal, Vertical et deux Diagonales
+        for ligne in range(plateau.taille):
+            for colonne in range(plateau.taille):
+                if plateau.plateau[ligne][colonne] == couleur:
+                    for dx, dy in directions:
+                        alignement = 1
+                        for i in range(1, 5):
+                            x, y = ligne + dx * i, colonne + dy * i
+                            if 0 <= x < plateau.taille and 0 <= y < plateau.taille and plateau.plateau[x][y] == couleur:
+                                alignement += 1
+                            else:
+                                break
+                        score += alignement
         return score

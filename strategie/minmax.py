@@ -27,19 +27,21 @@ class MinimaxStrategy:
     def __init__(self, plateau, couleur, difficulte='moyen'):
         self.plateau = plateau
         self.couleur = couleur
+        self.difficulte = difficulte
         self.couleur_adverse = 'N' if couleur == 'B' else 'B'
         if difficulte == 'difficile':
             self.profondeur = 4
         elif difficulte == 'moyen':
-            self.profondeur = 2
+            self.profondeur = 3
         elif difficulte == 'facile':
+            self.profondeur = 2
+        elif difficulte == 'tres_facile':
             self.profondeur = 1
         else:
             raise ValueError(f"Difficulté non reconnue: {difficulte}")
 
-        self.transposition_table = TableDeTransposition()  
         self.evaluation = Evaluation(plateau, couleur, difficulte)
-
+        self.transposition_table = TableDeTransposition()
     def generer_coups_possibles(self, plateau):
         """
         Génère et retourne une liste des coups possibles en se basant sur les espaces vides autour des pierres déjà placées sur le plateau.
@@ -75,6 +77,10 @@ class MinimaxStrategy:
         meilleur_score = float('-inf')
         meilleur_coup = None
 
+        # Retourne un coup aléatoire directement pour la difficulté très facile
+        if self.difficulte == 'tres_facile':
+            return self.choisir_coup_aleatoire(self.plateau)
+        
         try:
             coups_possibles = self.generer_coups_possibles(self.plateau)
 
@@ -90,7 +96,7 @@ class MinimaxStrategy:
                     break
         except Exception as e:
             print(f"Erreur inattendue lors du choix du coup : {e}")
-            meilleur_coup = self.choisir_coup_aleatoire(self.plateau)  # Fallback au coup aléatoire si erreur
+            meilleur_coup = self.choisir_coup_aleatoire(self.plateau) 
             if meilleur_coup is None:
                 print("Aucun coup possible trouvé après erreur.")
                 return None

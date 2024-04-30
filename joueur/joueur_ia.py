@@ -18,7 +18,7 @@ class JoueurIA:
         self.couleur = couleur
         self.difficulte = difficulte
         self.nom = nom
-        self.plateau = plateau  # Assurez-vous que le plateau est bien utilisé dans la stratégie
+        self.plateau = plateau  
         self.strategie = MinimaxStrategy(plateau, couleur, difficulte)
         self.est_ia = est_ia
 

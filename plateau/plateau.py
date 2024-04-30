@@ -209,26 +209,10 @@ class Plateau:
     def est_plein(self):
         """Retourne True si toutes les cases du plateau sont remplies."""
         return all(cell != '.' for row in self.plateau for cell in row)
-    
-    """
-    def evaluer_plateau(self, plateau):
-        '''
-        Évalue le plateau actuel selon un ensemble de configurations prédéfinies pour déterminer le score.
-        Cette méthode est un squelette et doit être complétée avec des règles d'évaluation spécifiques pour être fonctionnelle.
 
-        Paramètres:
-            plateau (list): Une matrice 2D représentant l'état actuel du plateau à évaluer.
-
-        Retourne:
-            int: Le score évalué du plateau basé sur les configurations prédéfinies.
-        '''
-        score = 0
-        configurations = {
-            'xxxxx': 100000,
-            'xxxxo': 10000,
-            'xxxox': 1000,
-
-        }
-
-        return score
-    """
+    def copier(self):
+        # Create a new Plateau instance with the same size
+        new_plateau = Plateau(self.taille)
+        # Copy the game board
+        new_plateau.plateau = [row[:] for row in self.plateau]
+        return new_plateau

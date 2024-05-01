@@ -50,33 +50,30 @@ class Plateau:
         """
         Affiche le plateau de jeu dans la console avec des couleurs et des symboles.
         """
-        PIERRE_NOIRE = Fore.LIGHTBLACK_EX  + '●' + Style.RESET_ALL  # Noir pour les pierres noires
+        PIERRE_NOIRE = Fore.BLACK  + '●' + Style.RESET_ALL  # Noir pour les pierres noires
         PIERRE_BLANCHE = Fore.WHITE + '○' + Style.RESET_ALL  # Blanc pour les pierres blanches
-        VIDE = Fore.RED + '.' + Style.RESET_ALL  # Rouge pour les vides
+        VIDE = ' ' + Style.RESET_ALL  # Rouge pour les vides
 
         # En-tête avec les numéros de colonne
         espacement_entre_colonnes = "  "
-        header = Fore.GREEN + " " * 3  # Vert pour l'alignement de la première colonne
-        header += espacement_entre_colonnes.join(Fore.GREEN + f"{i+1:2d}" + Style.RESET_ALL for i in range(self.taille))
+        header = Fore.BLUE + " " * 3  # Vert pour l'alignement de la première colonne
+        header += espacement_entre_colonnes.join(Fore.BLUE + f"{i+1:2d}" + Style.RESET_ALL for i in range(self.taille))
         print(header)
-
-        # Bordure supérieure du plateau
-        print(Fore.GREEN + " +" + "---+" * self.taille + Style.RESET_ALL)
 
         for idx, ligne in enumerate(self.plateau):
             # Ligne de séparation
-            print(Fore.GREEN + " +" + "---+" * self.taille + Style.RESET_ALL)
+            print(Fore.BLUE + "  +" + "---+" * self.taille + Style.RESET_ALL)
 
             # Affiche le numéro de la ligne à gauche du plateau et les barres verticales en vert
-            row_display = Fore.GREEN + f"{idx+1:2d}|"  # Vert pour le numéro de la ligne
+            row_display = Fore.BLUE + f"{idx+1:2d}| "  # Vert pour le numéro de la ligne
             row_display += " | ".join(
                 PIERRE_NOIRE if cell == 'B' else PIERRE_BLANCHE if cell == 'N' else VIDE for cell in ligne
             ) + " |" + Style.RESET_ALL
 
-            print(Fore.GREEN + row_display + Style.RESET_ALL)
+            print(Fore.BLUE + row_display + Style.RESET_ALL)
 
         # Dernière ligne de séparation
-        print(Fore.GREEN + " +" + "---+" * self.taille + Style.RESET_ALL)
+        print(Fore.BLUE + "  +" + "---+" * self.taille + Style.RESET_ALL)
 
         
     def placer_pierre(self, ligne, colonne, couleur):

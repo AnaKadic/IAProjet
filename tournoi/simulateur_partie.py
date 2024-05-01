@@ -28,30 +28,27 @@ class SimulateurPartie:
         """
         Affiche le plateau de jeu.
         """
-        PIERRE_NOIRE = Fore.LIGHTBLACK_EX + '●' + Style.RESET_ALL 
-        PIERRE_BLANCHE = Fore.WHITE + '○' + Style.RESET_ALL 
-        VIDE = Fore.RED + '.' + Style.RESET_ALL  
+        PIERRE_NOIRE = Fore.BLACK + '●' + Style.RESET_ALL 
+        PIERRE_BLANCHE = Fore.LIGHTWHITE_EX + '○' + Style.RESET_ALL 
+        VIDE = ' ' + Style.RESET_ALL  
 
         espacement_entre_colonnes = "  "
-        header = Fore.GREEN + " " * 3  
-        header += espacement_entre_colonnes.join(Fore.GREEN + f"{i+1:2d}" for i in range(self.plateau.taille))
+        header = Fore.BLUE + " " * 3  
+        header += espacement_entre_colonnes.join(Fore.BLUE + f"{i+1:2d}" for i in range(self.plateau.taille))
         print(header)
-
-        
-        print(Fore.GREEN + "  +" + "---+" * self.plateau.taille)
 
         for idx, ligne in enumerate(self.plateau.plateau):
         
-            print(Fore.GREEN + "  +" + "---+" * self.plateau.taille)
+            print(Fore.BLUE + "  +" + "---+" * self.plateau.taille)
 
         
-            row_display = Fore.GREEN + f"{idx+1:2d} |"  
+            row_display = Fore.BLUE + f"{idx+1:2d}| "  
             row_display += " | ".join(
                 PIERRE_NOIRE if cell == 'B' else PIERRE_BLANCHE if cell == 'N' else VIDE for cell in ligne
             ) + " |"
             print(row_display)
 
-        print(Fore.GREEN + "  +" + "---+" * self.plateau.taille)
+        print(Fore.BLUE + "  +" + "---+" * self.plateau.taille)
 
     def jouer_coup(self):
         """

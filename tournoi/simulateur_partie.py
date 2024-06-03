@@ -28,7 +28,7 @@ class SimulateurPartie:
         """
         Affiche le plateau de jeu.
         """
-        PIERRE_NOIRE = Fore.BLACK + '●' + Style.RESET_ALL 
+        PIERRE_NOIRE = Fore.BLUE + '●' + Style.RESET_ALL 
         PIERRE_BLANCHE = Fore.LIGHTWHITE_EX + '○' + Style.RESET_ALL 
         VIDE = ' ' + Style.RESET_ALL  
 

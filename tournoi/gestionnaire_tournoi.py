@@ -62,7 +62,7 @@ class GestionnaireTournoi:
         Organise et exécute le tournoi complet entre tous les joueurs.
         """
         self.reinitialiser_resultats()
-        total_matches = 30
+        total_matches = 3
         for _ in range(total_matches // 2):  # Chaque match est joué deux fois, donc diviser par 2
             for joueur1, joueur2 in [(self.joueurs[0], self.joueurs[1]), (self.joueurs[1], self.joueurs[0])]:
                 resultats = self.organiser_match(joueur1, joueur2)

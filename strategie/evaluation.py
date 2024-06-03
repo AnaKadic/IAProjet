@@ -2,7 +2,7 @@
 #from plateau.plateau import Plateau
 #import numpy as np
 
-class Evaluation:
+class Evaluation:    
     """
     Classe d'évaluation pour une stratégie de jeu.
     Permet d'évaluer les positions sur le plateau en fonction de la couleur des pièces,
@@ -26,7 +26,6 @@ class Evaluation:
     def set_difficulte(self, difficulte):
         """
         Définit le niveau de difficulté de l'évaluation et ajuste les paramètres liés.
-
         Entrée:
             difficulte (str): Niveau de difficulté ('facile', 'moyen', 'difficile').
 
@@ -60,7 +59,7 @@ class Evaluation:
         nb_coups_joues = len([p for row in plateau for p in row if p != '.'])  # Compte les coups déjà joués
 
         # Évaluation défensive seulement pour les six premiers coups de chaque joueur
-        if nb_coups_joues <= 12:  # Chaque joueur a joué six fois
+        if nb_coups_joues <= 24:  # Chaque joueur a joué
             score_defensif = self.evaluer_defense_simple(plateau, self.couleur_adverse)
             if score_defensif < 0:  # Appliquer la défense seulement si elle est nécessaire
                 score += score_defensif
@@ -69,6 +68,7 @@ class Evaluation:
         score += self.evaluer_attaques_potentielles(plateau, self.couleur)
 
         return score
+    
     def evaluer_defense_simple(self, plateau, couleur_adverse):
         """
         Évalue défensivement pour bloquer les menaces adverses de victoir.
@@ -449,6 +449,7 @@ class Evaluation:
             score (int): Score basé sur le nombre de pierres alignées directement.
 
        """
+        
         return self.compter_pierres_alignees(plateau, self.couleur)
     
     def compter_pierres_alignees(self, plateau, couleur):

@@ -1,8 +1,5 @@
 # Projet IA - Jeu de Gomoku
 
-## Auteurs
-KADIC Anaïs & GRAVIL Athenaïs
-
 ## Description du projet
 Ce projet, réalisé en Licence 3 à l'Université Paris-Cité, vise à développer une intelligence artificielle capable de jouer au jeu de Gomoku contre un joueur humain. Le Gomoku est un jeu de stratégie où le but est d'aligner cinq pierres de sa couleur sur un plateau de jeu.
 

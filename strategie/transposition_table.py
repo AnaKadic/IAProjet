@@ -1,6 +1,6 @@
 # table_de_transposition.py
 
-#L'utilisation de la table de transposition réduit le nombre de positions à évaluer, et accelere l'exécution de l'algorithme
+# L'utilisation de la table de transposition réduit le nombre de positions à évaluer, et accelere l'exécution de l'algorithme
 
 class TableDeTransposition:
     def __init__(self):

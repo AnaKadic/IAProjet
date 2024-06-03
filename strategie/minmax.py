@@ -2,7 +2,7 @@ import numpy as np
 import random
 from strategie.evaluation import Evaluation  
 from strategie.transposition_table import TableDeTransposition
-#from plateau.plateau import Plateau
+
 
 class MinimaxStrategy:
     """
@@ -22,8 +22,8 @@ class MinimaxStrategy:
         choisir_coup(): Sélectionne le meilleur coup possible en utilisant l'algorithme Minimax.
         minmax(plateau, profondeur, maximisant, alpha, beta): Implémentation récursive de l'algorithme Minimax avec élagage alpha-beta.
         choisir_coup_aleatoire(plateau): Choix d'un coup aléatoire si aucun coup optimal n'est trouvé ou pour diversifier le jeu.
-
     """
+    
     def __init__(self, plateau, couleur, difficulte='moyen'):
         self.plateau = plateau
         self.couleur = couleur
@@ -42,6 +42,7 @@ class MinimaxStrategy:
 
         self.evaluation = Evaluation(plateau, couleur, difficulte)
         self.transposition_table = TableDeTransposition()
+
     def generer_coups_possibles(self, plateau):
         """
         Génère et retourne une liste des coups possibles en se basant sur les espaces vides autour des pierres déjà placées sur le plateau.
@@ -51,6 +52,7 @@ class MinimaxStrategy:
 
         Sortie:
             list: Liste des tuples (x, y) représentant les coordonnées des coups possibles.
+
         """
         coords = []
         try:
@@ -119,7 +121,7 @@ class MinimaxStrategy:
             float: La valeur du meilleur score trouvé.
             tuple: Coordonnées du meilleur coup associé à ce score, ou None si aucun coup n'est trouvé.
         """
-        # Générer une clé unique pour la position actuelle pour la table de transposition
+
         position_key = (str(plateau.plateau), profondeur, maximisant)
         try:
             result = self.transposition_table.rechercher(position_key)

@@ -50,7 +50,7 @@ class Plateau:
         """
         Affiche le plateau de jeu dans la console avec des couleurs et des symboles.
         """
-        PIERRE_NOIRE = Fore.BLACK  + '●' + Style.RESET_ALL  # Noir pour les pierres noires
+        PIERRE_NOIRE = Fore.BLUE  + '●' + Style.RESET_ALL  # Noir pour les pierres noires
         PIERRE_BLANCHE = Fore.WHITE + '○' + Style.RESET_ALL  # Blanc pour les pierres blanches
         VIDE = ' ' + Style.RESET_ALL  # Rouge pour les vides
 
@@ -188,10 +188,8 @@ class Plateau:
         Retourne:
             Plateau: Une nouvelle instance de Plateau représentant l'état après le coup.
         """
-        # Crée une copie profonde du plateau
+        # Crée une copie du plateau
         nouveau_plateau = copy.deepcopy(self.plateau)
-        
-        # Applique le coup sur la copie
         ligne, colonne = coup
         nouveau_plateau[ligne][colonne] = couleur
         
@@ -202,14 +200,11 @@ class Plateau:
         return plateau_temp
     
    
-
     def est_plein(self):
         """Retourne True si toutes les cases du plateau sont remplies."""
         return all(cell != '.' for row in self.plateau for cell in row)
 
     def copier(self):
-        # Create a new Plateau instance with the same size
         new_plateau = Plateau(self.taille)
-        # Copy the game board
         new_plateau.plateau = [row[:] for row in self.plateau]
         return new_plateau
